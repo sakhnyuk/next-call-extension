@@ -1,4 +1,4 @@
-import { CalendarDto, CalendarModel } from '../models';
+import { CalendarDto, CalendarModel, EventDto, EventModel } from '../models';
 
 class Gapi {
   private URL_CALENDARS =
@@ -47,16 +47,14 @@ class Gapi {
 
   getEvents = async (calendarId = 'primary') => {
     const url = this.getEventsURL(calendarId);
-    const events = await this.apiGet(url, {
+    const data = await this.apiGet<{ items: EventDto[] }>(url, {
       timeMin: new Date().toISOString(),
       maxResults: 10,
       singleEvents: true,
       orderBy: 'startTime',
     });
 
-    console.log({ events });
-
-    return events;
+    return data.items.map((eventDto) => new EventModel(eventDto));
   };
 }
 
