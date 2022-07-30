@@ -1,8 +1,6 @@
-const secrets = require('./secrets').default;
+const secrets = require('./secrets');
 
-console.log({ secrets });
-
-exports.default = {
+module.exports = {
   manifest_version: 3,
   key: secrets.key,
   name: 'Next Call Extension',
