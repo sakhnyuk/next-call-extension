@@ -1,14 +1,17 @@
+import { identityService } from 'services';
 import { createStore, SetStoreFunction } from 'solid-js/store';
 
 interface IState {
   isLoading: boolean;
+  authenticated: boolean;
   token?: string;
   email?: string;
   userId?: string;
 }
 
 const initialState: IState = {
-  isLoading: false,
+  isLoading: true,
+  authenticated: false,
 };
 
 class CoreController {
@@ -21,23 +24,30 @@ class CoreController {
     this.setState = setState;
   }
 
-  initUser = () => {
-    this.setIsLoading(true);
-    chrome.identity.getAuthToken({ interactive: true }, (token) => {
-      this.setState({ token });
-      this.getUserInfo();
-      this.setIsLoading(false);
-    });
+  initApp = async () => {
+    const authenticated = await identityService.checkAccess();
+    this.getUserInfo();
+
+    this.setState({ authenticated, isLoading: false });
   };
 
-  getUserInfo = () => {
-    chrome.identity.getProfileUserInfo((userInfo) => {
-      this.setState({ userId: userInfo.id, email: userInfo.email });
-    });
+  getUserInfo = async () => {
+    const userInfo = await identityService.getUserInfo();
+    this.setState({ userId: userInfo.id, email: userInfo.email });
   };
 
-  setIsLoading = (value: boolean) => {
-    this.setState({ isLoading: value });
+  authUser = async () => {
+    try {
+      const token = await identityService.authUser();
+      this.setState({ token, authenticated: true });
+    } catch (error) {}
+  };
+
+  logoutUser = async () => {
+    try {
+      await identityService.logoutUser();
+      this.setState({ token: undefined, authenticated: false });
+    } catch (error) {}
   };
 }
 

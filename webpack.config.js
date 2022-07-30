@@ -9,18 +9,6 @@ const webpack = require('webpack'),
 
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 
-const alias = {};
-
-// Load the common secrets
-const baseSecretsPath = path.join(__dirname, 'secrets.js');
-let secrets = {};
-if (fileSystem.existsSync(baseSecretsPath)) {
-  secrets = require(baseSecretsPath);
-}
-
-// load the secrets
-const secretsPath = path.join(__dirname, 'secrets.' + env.NODE_ENV + '.js');
-
 const fileExtensions = [
   'jpg',
   'jpeg',
@@ -33,10 +21,6 @@ const fileExtensions = [
   'woff',
   'woff2',
 ];
-
-if (fileSystem.existsSync(secretsPath)) {
-  alias['secrets'] = secretsPath;
-}
 
 const options = {
   mode: process.env.NODE_ENV || 'development',
@@ -106,7 +90,11 @@ const options = {
     ],
   },
   resolve: {
-    alias: alias,
+    alias: {
+      gapi: path.resolve(__dirname, 'src/gapi'),
+      models: path.resolve(__dirname, 'src/models'),
+      services: path.resolve(__dirname, 'src/services'),
+    },
     extensions: fileExtensions
       .map((extension) => '.' + extension)
       .concat(['.js', '.jsx', '.ts', '.tsx', '.css']),

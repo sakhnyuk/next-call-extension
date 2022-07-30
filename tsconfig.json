@@ -15,7 +15,12 @@
     "noEmit": false,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "types": ["webpack-env", "chrome"]
+    "types": ["webpack-env", "chrome"],
+    "paths": {
+      "gapi": ["./src/gapi"],
+      "models": ["./src/models"],
+      "services": ["./src/services"]
+    }
   },
   "include": ["src"],
   "exclude": ["build", "node_modules"]
